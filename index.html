@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CODE COMBAT — The Lost Kingdom</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&family=Pixelify+Sans:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="menu-open">
+<div class="home-screen" id="homeScreen">
+  <div class="home-backdrop"></div>
+  <div class="home-content">
+    <div class="home-brand"><span class="brand-mark">⚔</span><div><p>THE LOST KINGDOM</p><h1>CODE COMBAT</h1><span>CODE YOUR WAY TO LEGEND</span></div></div>
+    <p class="home-intro">A kingdom has fallen silent. Write code, command your hero, and bring its light back.</p>
+    <div class="home-actions">
+      <button class="home-action primary-action" id="playGameBtn"><span>▶</span><b>PLAY ADVENTURE</b><small>Continue your journey</small></button>
+      <button class="home-action" id="openFunctionsBtn"><span>⌘</span><b>FUNCTION WORKSHOP</b><small>Create reusable code in C++ or Python</small></button>
+      <button class="home-action" id="openProfileBtn"><span>♜</span><b>PLAYER PROFILE</b><small>View rank, rewards and progress</small></button>
+      <button class="home-action" id="openSettingsBtn"><span>⚙</span><b>SETTINGS</b><small>Customize your adventure</small></button>
+    </div>
+    <div class="home-footer"><span>6 CHAPTERS</span><span>•</span><span>LEARN C++</span><span>•</span><span>BUILD YOUR OWN FUNCTIONS</span></div>
+  </div>
+</div>
+<div class="modal-backdrop" id="modalBackdrop" hidden>
+  <section class="game-modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <button class="modal-close" id="closeModalBtn" aria-label="Close">×</button>
+    <div id="modalContent"></div>
+  </section>
+</div>
+
+<div class="wrap">
+  <header>
+    <button class="back-menu-btn" id="backMenuBtn" type="button">← MAIN MENU</button>
+    <div>
+      <h1>CODE COMBAT </h1>
+      <p class="tag">Write C++ to command your hero, or build reusable helper functions in C++ and Python.</p>
+    </div>
+    <nav class="levels" id="levelNav" aria-label="Levels"></nav>
+  </header>
+
+  <section class="profile-strip" aria-label="Hero profile">
+    <div><span class="profile-kicker">THE LOST KINGDOM</span><strong>Adventurer Rank <b id="rankTxt">1</b></strong></div>
+    <div class="profile-stat"><span>XP</span><b id="xpTxt">0</b></div>
+    <div class="profile-stat"><span>Coins</span><b id="coinTxt">0</b></div>
+    <div class="profile-stat"><span>Stars</span><b id="starTxt">0 / 18</b></div>
+  </section>
+
+  <section class="brief" aria-live="polite">
+    <span class="lvl" id="lvlLabel"></span>
+    <h2 id="lvlName"></h2>
+    <p id="lvlBrief"></p>
+    <div class="mission-meta"><span id="storyTxt"></span><span class="concept-pill" id="conceptTxt"></span></div>
+    <details><summary>Need a hint?</summary><p id="lvlHint"></p></details>
+  </section>
+
+  <div class="grid">
+    <div class="col">
+      <div class="stage"><canvas id="stage" aria-label="Game board"></canvas></div>
+      <div class="hud">
+        <span class="hp">Health <span class="bar"><i id="hpFill"></i></span><b id="hpTxt"></b></span>
+        <span>Gems <b id="gemTxt"></b></span>
+        <span>Foes <b id="foeTxt"></b></span>
+        <span>Turn <b id="turnTxt"></b></span>
+        <span id="cursor"></span>
+      </div>
+      <div class="log" id="log" role="status" data-kind="info">
+        <span class="chip" id="logChip">Ready</span>
+        <p id="logMsg"></p>
+        <div class="actions" id="logActions"></div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="editor">
+        <div class="editor-top"><span id="editorFileLabel">hero.cpp</span><span>Ctrl/Cmd + Enter runs</span></div>
+        <textarea id="code" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" aria-label="Hero C++ code"></textarea>
+        <div class="controls">
+          <button class="btn primary" id="runBtn" type="button">Run</button>
+          <button class="btn" id="resetBtn" type="button">Reset code</button>
+          <div class="speed" role="group" aria-label="Playback speed">
+            <span>Speed</span>
+            <button type="button" data-speed="1" aria-pressed="true">1x</button>
+            <button type="button" data-speed="2" aria-pressed="false">2x</button>
+            <button type="button" data-speed="4" aria-pressed="false">4x</button>
+          </div>
+        </div>
+      </div>
+      <details class="api" open>
+        <summary>Hero commands</summary>
+        <dl>
+          <dt>hero.moveRight(n);</dt><dd>Walk n tiles right. Also moveLeft, moveUp, moveDown. n defaults to 1.</dd>
+          <dt>hero.moveXY(x, y);</dt><dd>Walk to a tile, going around walls.</dd>
+          <dt>hero.attack(enemy);</dt><dd>One turn: step toward the enemy, or strike if next to it (2 damage).</dd>
+          <dt>hero.findNearestEnemy()</dt><dd>Returns an Enemy*, or nullptr when none are left.</dd>
+          <dt>hero.findEnemies()</dt><dd>Returns a vector&lt;Enemy*&gt; of living enemies.</dd>
+          <dt>hero.findGems()</dt><dd>Returns a vector&lt;Item*&gt; of gems on the ground. hero.findPotions() does the same for potions.</dd>
+          <dt>hero.findNearest(list)</dt><dd>The closest thing in a vector, or nullptr when it is empty.</dd>
+          <dt>hero.say("text");</dt><dd>Show a speech bubble.</dd>
+          <dt>hero.x, hero.y, hero.health</dt><dd>Where you are and how healthy you are.</dd>
+          <dt>enemy-&gt;alive, enemy-&gt;health</dt><dd>Check on a foe. Also enemy-&gt;x, enemy-&gt;y, enemy-&gt;type. Items have x, y and type.</dd>
+          <dt>list.size(), list.empty()</dt><dd>Work with vectors. list[0] is the first entry.</dd>
+          <dt>cout &lt;&lt; value &lt;&lt; endl;</dt><dd>Print text to the output shown below the board.</dd>
+        </dl>
+      </details>
+    </div>
+  </div>
+
+  <section class="adventure-note"><strong>🧭 Field Guide</strong><span>Complete missions to earn XP, coins and stars. Your best star rating is saved on this device. Improve your code to earn a better rank.</span></section>
+  <footer>Each move or attack costs one turn, and foes next to you strike back every turn. Potions restore 4 health. Wolves bite for 2. Your code runs in a built-in C++ subset: int, bool, string, auto, vector, pointers with ->, if, for, while, functions and cout. Tiles are counted from 0 at the top left; the numbers on the board edge show x and y.</footer>
+</div>
+
+<script src="levels.js"></script>
+<script src="cpp.js"></script>
+<script src="engine.js"></script>
+<script src="main.js"></script>
+</body>
+</html>
